@@ -19,42 +19,43 @@ public class Client {
         try {
             InetAddress address = InetAddress.getByName(host_name);
             
-            System.out.println("here");
             DatagramSocket socket = new DatagramSocket();
-            System.out.println("there");
  
             while (true) {
             	
             	byte[] buf = new byte[256];
  
-            	if(args.length == 4) {
+            	if(args.length == 4 && oper.equals("lookup")) {
                 	buf = (oper+" "+args[3]).getBytes();
+                	System.out.println("lookup "+args[3]);
             	}
             	
-            	if(args.length == 5) {
+            	else if(args.length == 5 && oper.equals("register")) {
             		buf = (oper+" "+args[3]+" "+args[4]).getBytes();
+            		System.out.println("register "+args[3]+args[4]);
+            	}
+            	
+            	else {
+            		System.out.println("invalid argument numbers for selected command");
+            		socket.close();
+            		return;
             	}
             	
                 DatagramPacket request = new DatagramPacket(buf, buf.length, address, port_number);
                 socket.send(request);
-                
-                System.out.println("sent");
- 
+
                 byte[] buffer = new byte[512];
                 DatagramPacket response = new DatagramPacket(buffer, buffer.length);
                 
-                System.out.println("waiting");
-                
                 socket.receive(response);
-                
-                System.out.println("Server pulled through");
  
                 String serverReply = new String(buffer, 0, response.getLength());
  
                 System.out.println(serverReply);
                 System.out.println();
- 
-                Thread.sleep(10000);
+
+                socket.close();
+                break;
             }
  
         } catch (SocketTimeoutException ex) {
@@ -62,8 +63,6 @@ public class Client {
             ex.printStackTrace();
         } catch (IOException ex) {
             System.out.println("Client error: " + ex.getMessage());
-            ex.printStackTrace();
-        } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
     }

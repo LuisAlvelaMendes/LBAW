@@ -12,6 +12,21 @@ public class Server {
 	private List<Registration> listOfRegistrations = new ArrayList<Registration>();
 	
 	public Server(int port) throws SocketException {
+		
+		Registration regis1 = new Registration("Paulo", "XX-XX-XX");
+		Registration regis2 = new Registration("João", "XX-YX-4X");
+		Registration regis3 = new Registration("Fábio", "ZX-3X-12");
+		Registration regis4 = new Registration("Ric", "XX-2X-1X");
+		Registration regis5 = new Registration("Maria", "VX-3X-XX");
+		Registration regis6 = new Registration("Joana", "1X-2X-6X");
+		
+		listOfRegistrations.add(regis1);
+		listOfRegistrations.add(regis2);
+		listOfRegistrations.add(regis3);
+		listOfRegistrations.add(regis4);
+		listOfRegistrations.add(regis5);
+		listOfRegistrations.add(regis6);
+		
 		socket = new DatagramSocket(port);
 	}
 
@@ -45,23 +60,63 @@ public class Server {
             
             String received = new String(request.getData(), 0, request.getLength());
             
-            System.out.println("Received this: " + received);
+            String[] receivedParts = received.split(" ");
+            
+            String responseString = "";
+            
+            if(receivedParts[0].equals("register")) {
+            	System.out.println("register " + receivedParts[1] + " " + receivedParts[2]);
+            	int result = register(receivedParts[1], receivedParts[2]);
+            	responseString = responseString + result;
+            	System.out.println(listOfRegistrations);
+            }
+            
+            if(receivedParts[0].equals("lookup")) {
+            	System.out.println("lookup " + receivedParts[1]);
+            	String result = lookup(receivedParts[1]);
+            	responseString = responseString + result;
+            }
+            
+            System.out.println("Result: " + responseString);
             
             InetAddress clientAddress = request.getAddress();
             int clientPort = request.getPort();
             
             byte[] buffer = new byte[512];
-            buffer = ("This is a messgae").getBytes();
+            buffer = responseString.getBytes();
             DatagramPacket response = new DatagramPacket(buffer, buffer.length, clientAddress, clientPort);
             socket.send(response);
         }
     }
 	
 	private int register(String license, String owner) {
-		return -1;
+		
+		boolean found = false;
+		
+		for(int i = 0; i < listOfRegistrations.size(); i++) {
+			if(listOfRegistrations.get(i).license.equals(license)) {
+				found = true;
+			}
+		}
+		
+		if(!found) {
+			Registration newRegister = new Registration(owner, license);
+			listOfRegistrations.add(newRegister);
+			
+			return listOfRegistrations.size();
+		}
+		
+		else return -1;
 	}
 	
 	private String lookup(String license) {
+		
+		for(int i = 0; i < listOfRegistrations.size(); i++) {
+			if(listOfRegistrations.get(i).license.equals(license)) {
+				return listOfRegistrations.get(i).owner;
+			}
+		}
+		
 		return "NOT_FOUND";
 	}
 }
