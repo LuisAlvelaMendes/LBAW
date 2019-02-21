@@ -49,11 +49,16 @@ TOKEN:
 {
  < INTEGER: (["0"-"9"])+ >
 | < LF: "\n" >
+| < SYMBOL: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+| < EQUAL: "=" >
 }
 
 SimpleNode Expression(): {}
 {
- Expr1() <LF> {return jjtThis;}
+ Expr1() <LF> {return jjtThis;} 
+ | ((<SYMBOl>) 
+   (<EQUAL>) 
+   t=<INTEGER>{jjtThis.val = sign * Integer.parseInt(t.image);} #Term)
 }
 
 void Expr1() #void: {}
@@ -69,10 +74,10 @@ void Expr2(int sign) #void: {} // 1: positive; -1: negative
 
 void Expr3(int sign) #void: {Token t;}
 {
- t=<INTEGER>
-{
-jjtThis.val = sign * Integer.parseInt(t.image);
-} #Term
+
+ t=<INTEGER> {
+  jjtThis.val = sign * Integer.parseInt(t.image);
+ } #Term
 
  | "-" Expr3(-1)
  | "(" Expr1() ")"

@@ -8,11 +8,6 @@ class SimpleNode implements Node {
   protected int id;
   protected Object value;
   protected Calculator parser;
-  protected Constants MyConstants;
-
-  // added
-  public int val;
-  public int Op = 0;
 
   public SimpleNode(int i) {
     id = i;
@@ -70,25 +65,6 @@ class SimpleNode implements Node {
 
   public void dump(String prefix) {
     System.out.println(toString(prefix));
-
-    switch(this.id) {
-      case CalculatorTreeConstants.JJTADD:
-        System.out.println("\t[ + ]");
-      break;
-
-      case CalculatorTreeConstants.JJTSUB:
-        System.out.println("\t[ - ]");
-      break;
-
-      case CalculatorTreeConstants.JJTMUL:
-        System.out.println("\t[ * ]");
-      break;
-
-      case CalculatorTreeConstants.JJTDIV:
-        System.out.println("\t[ / ]");
-      break;
-    }
-
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         SimpleNode n = (SimpleNode)children[i];
@@ -102,7 +78,6 @@ class SimpleNode implements Node {
   public int getId() {
     return id;
   }
-
 }
 
 /* JavaCC - OriginalChecksum=c23545708c03051bdb71d548ae180812 (do not edit this line) */

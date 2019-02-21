@@ -53,6 +53,8 @@ TOKEN:
 {
  < INTEGER: (["0"-"9"])+ >
 | < LF: "\n" >
+| < SYMBOL: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+| < EQUAL: "=" >
 }
 
 SimpleNode Expression(): {/*@bgen(jjtree) Expression */
@@ -68,7 +70,28 @@ SimpleNode Expression(): {/*@bgen(jjtree) Expression */
                 jjtree.closeNodeScope(jjtn000, true);
                 jjtc000 = false;
               }
-/*@egen*/ {return jjtn000;}/*@bgen(jjtree)*/
+/*@egen*/ {return jjtn000;} 
+ | ((<SYMBOl>) 
+   (<EQUAL>) 
+   t=<INTEGER>/*@bgen(jjtree) Term */
+              {
+                SimpleNode jjtn001 = new SimpleNode(JJTTERM);
+                boolean jjtc001 = true;
+                jjtree.openNodeScope(jjtn001);
+              }
+              try {
+/*@egen*//*@bgen(jjtree)*/
+              {
+                jjtree.closeNodeScope(jjtn001, true);
+                jjtc001 = false;
+              }
+/*@egen*/{jjtn001.val = sign * Integer.parseInt(t.image);}/*@bgen(jjtree)*/
+              } finally {
+                if (jjtc001) {
+                  jjtree.closeNodeScope(jjtn001, true);
+                }
+              }
+/*@egen*/      )/*@bgen(jjtree)*/
  } catch (Throwable jjte000) {
    if (jjtc000) {
      jjtree.clearNodeScope(jjtn000);
@@ -212,27 +235,27 @@ void Expr2(int sign)      : {} // 1: positive; -1: negative
 
 void Expr3(int sign)      : {Token t;}
 {
+
  t=<INTEGER>/*@bgen(jjtree) Term */
-{
-  SimpleNode jjtn001 = new SimpleNode(JJTTERM);
-  boolean jjtc001 = true;
-  jjtree.openNodeScope(jjtn001);
-}
-try {
+             {
+               SimpleNode jjtn001 = new SimpleNode(JJTTERM);
+               boolean jjtc001 = true;
+               jjtree.openNodeScope(jjtn001);
+             }
+             try {
 /*@egen*//*@bgen(jjtree)*/
-{
-  jjtree.closeNodeScope(jjtn001, true);
-  jjtc001 = false;
-}
-/*@egen*/
-{
-jjtn001.val = sign * Integer.parseInt(t.image);
-}/*@bgen(jjtree)*/
-} finally {
-  if (jjtc001) {
-    jjtree.closeNodeScope(jjtn001, true);
-  }
-}
+             {
+               jjtree.closeNodeScope(jjtn001, true);
+               jjtc001 = false;
+             }
+/*@egen*/ {
+  jjtn001.val = sign * Integer.parseInt(t.image);
+ }/*@bgen(jjtree)*/
+             } finally {
+               if (jjtc001) {
+                 jjtree.closeNodeScope(jjtn001, true);
+               }
+             }
 /*@egen*/      
 
  | "-" Expr3(-1)

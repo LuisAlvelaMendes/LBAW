@@ -21,7 +21,9 @@ SKIP :
 // definição dos tokens (símbolos terminais)
 TOKEN : 
 {
-< INTEGER : (["0" - "9"])+ > | < LF : "\n" > | < SIGN: ("+" | "-") > 
+< INTEGER : (["0" - "9"])+ > 
+| < LF : "\n" > 
+| < SIGN: ("+" | "-") > 
 }
 
 // definição da produção
