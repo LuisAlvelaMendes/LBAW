@@ -9,6 +9,10 @@ class SimpleNode implements Node {
   protected Object value;
   protected Calculator parser;
 
+  public String identifier = null;
+  public int val;
+  public int Op = 0;
+
   public SimpleNode(int i) {
     id = i;
   }

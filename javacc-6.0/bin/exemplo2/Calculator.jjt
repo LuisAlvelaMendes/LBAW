@@ -1,8 +1,13 @@
 options {
- LOOKAHEAD=1;
+ LOOKAHEAD=2;
+ FORCE_LA_CHECK=true;
 }
 
 PARSER_BEGIN(Calculator)
+
+import java.util.HashMap;
+import java.lang.Integer;
+import java.lang.String;
 
 public class Calculator
 {
@@ -11,27 +16,70 @@ public class Calculator
         SimpleNode root = myCalc.Expression();
         root.dump("");
 
+        myCalc.createSymbolTable(root);
+
         System.out.println("Result: "+myCalc.eval(root));
     }
 
+    HashMap<String, Integer> SymbolTable = new HashMap<String,Integer>();
+
+    void createSymbolTable(SimpleNode node) {
+
+        for(int i=0; i < node.jjtGetNumChildren(); i++) {
+            createSymbolTable((SimpleNode) node.jjtGetChild(i));
+        }
+
+        if(node.id == CalculatorTreeConstants.JJTASSIGNMENT && !SymbolTable.containsKey(node.identifier)) {
+            System.out.println("Taking " + node.identifier + " of value: " + node.val);
+            SymbolTable.put(node.identifier, new Integer(node.val));
+            return;
+        }
+
+        return;
+    }
+
     int eval(SimpleNode node) {
-        if(node.jjtGetNumChildren() == 0) // leaf node with integer value
-            return node.val;
-        else if(node.jjtGetNumChildren() == 1) // only one child
+
+        if(node.jjtGetNumChildren() == 0){ // leaf node with integer value
+
+            if(node.identifier != null){ // assignment node
+                if(SymbolTable.containsKey(node.identifier)){
+                    return ((Integer) SymbolTable.get(node.identifier)).intValue();
+                }
+
+                else {
+                    System.out.println("Identifier " + node.identifier + " not inicialzied.");
+                    System.exit(1);
+                }
+            } else return node.val;
+
+        } 
+
+        else if(node.jjtGetNumChildren() == 1){ // only one child
             return this.eval((SimpleNode) node.jjtGetChild(0));
+        }
 
-        SimpleNode lhs = (SimpleNode) node.jjtGetChild(0); //left child
-        SimpleNode rhs = (SimpleNode) node.jjtGetChild(1); // right child
+        else if(node.id == CalculatorTreeConstants.JJTEXPRESSION) {
+            for(int i=0; i< node.jjtGetNumChildren(); i++) {
+                SimpleNode sn = (SimpleNode) node.jjtGetChild(i);
+                if(sn.id != CalculatorTreeConstants.JJTASSIGNMENT) return this.eval(sn);     // there is only one expression to evaluate
+            }
+        }
 
-        switch(node.id) {
-            case CalculatorTreeConstants.JJTADD : return eval( lhs ) + eval( rhs );
-            case CalculatorTreeConstants.JJTSUB : return eval( lhs ) - eval( rhs );
-            case CalculatorTreeConstants.JJTMUL : return eval( lhs ) * eval( rhs );
-            case CalculatorTreeConstants.JJTDIV : return eval( lhs ) / eval( rhs );
+        else {
+            SimpleNode lhs = (SimpleNode) node.jjtGetChild(0); //left child
+            SimpleNode rhs = (SimpleNode) node.jjtGetChild(1); // right child
 
-            default : // abort
-            System.out.println("Operador ilegal!");
-            System.exit(1);
+            switch(node.id) {
+                case CalculatorTreeConstants.JJTADD : return eval( lhs ) + eval( rhs );
+                case CalculatorTreeConstants.JJTSUB : return eval( lhs ) - eval( rhs );
+                case CalculatorTreeConstants.JJTMUL : return eval( lhs ) * eval( rhs );
+                case CalculatorTreeConstants.JJTDIV : return eval( lhs ) / eval( rhs );
+
+                default : // abort
+                System.out.println("Operador ilegal!");
+                System.exit(1);
+            }
         }
         
         return 0;
@@ -49,35 +97,55 @@ TOKEN:
 {
  < INTEGER: (["0"-"9"])+ >
 | < LF: "\n" >
-| < SYMBOL: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
-| < EQUAL: "=" >
+| < VAR: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
 }
 
 SimpleNode Expression(): {}
 {
+ // pode have 0 ou mais atribuições antes da expressão principal
+ (Assignment())*
  Expr1() <LF> {return jjtThis;} 
- | ((<SYMBOl>) 
-   (<EQUAL>) 
-   t=<INTEGER>{jjtThis.val = sign * Integer.parseInt(t.image);} #Term)
+}
+
+void Assignment(): {Token t;}
+{
+ //<VAR>=<INTEGER>; (A=2; B=3; ...)
+
+ t=<VAR>
+ {
+     jjtThis.identifier = new String(t.image);
+ }
+ "="
+ t=<INTEGER> ";" 
+ {
+     jjtThis.val = Integer.parseInt(t.image);
+ } 
 }
 
 void Expr1() #void: {}
 {
- Expr2(1) [("+" Expr2(1) #Add(2) | "-" Expr2(1) #Sub(2))]
+ Expr2(1) ("+" Expr2(1) #Add(2) | "-" Expr2(1) #Sub(2))*
 }
 
 void Expr2(int sign) #void: {} // 1: positive; -1: negative
 {
  Expr3(sign) 
- ("*" Expr3(1) #Mul(2) | "/" Expr3(1) #Div(2))? // (…)? é equivalente a […]
+ ("*" Expr3(1) #Mul(2) | "/" Expr3(1) #Div(2))*
 }
 
 void Expr3(int sign) #void: {Token t;}
 {
 
- t=<INTEGER> {
+ (t=<INTEGER> {
   jjtThis.val = sign * Integer.parseInt(t.image);
  } #Term
+ 
+ |
+ 
+ t=<VAR>
+ {
+  jjtThis.identifier = new String(t.image);
+ } #Assignment)
 
  | "-" Expr3(-1)
  | "(" Expr1() ")"
