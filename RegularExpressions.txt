@@ -1,0 +1,11 @@
+http://kiwwito.com/build-a-lexical-analyzer-with-javacc/
+
+    <INTEGER: (<DIGIT>)+>
+    | <ID: <LETTER> (<LETTER> | <DIGIT>)*>
+    | <#LETTER: ["$","A"-"Z","_","a"-"z"]>
+    | <#DIGIT: ["0"-"9"]>
+    | <STRING: "\"" (["a"-"z","A"-"Z","0"-"9",":"," ","="])+ "\"">
+
+Identifier -> < IDENTIFIER : (["A"-"Z","a"-"z"](["A"-"Z","a"-"z","0"-"9","_"])*)(["$"])? >
+Integer Literal -> < INTEGER_VALUE : "0" | (["1"-"9"] (["0"-"9"])*) >
+EOF -> <EOF>
