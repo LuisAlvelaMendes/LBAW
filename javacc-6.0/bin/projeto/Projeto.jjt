@@ -1,0 +1,64 @@
+options {
+ LOOKAHEAD=1;
+}
+
+PARSER_BEGIN(JvmGrammar)
+
+public class JvmGrammar
+{
+    public static void main(String args[]) throws ParseException {
+        JvmGrammar myGrammar = new JvmGrammar(System.in);
+        SimpleNode root = myGrammar.Program();
+        root.dump("");
+    }
+}
+
+PARSER_END(JvmGrammar)
+
+SKIP :
+{
+" " | "\r" | "\t"
+}
+
+TOKEN:
+{
+ < IDENTIFIER : <LETTER> (<LETTER> | <DIGIT>)* >
+ | < #LETTER : ["$","A"-"Z","_","a"-"z"] >
+ | < #DIGIT : ["0"-"9"] >
+ | < INTEGERLITERAL : "0" | (["1"-"9"] (<DIGIT>)*) >
+}
+
+SimpleNode Program() : {}
+{
+ ClassDeclaration() <EOF>
+}
+
+void ClassDeclaration() : {}
+{
+ "class" <IDENTIFIER> ["extends" <IDENTIFIER>] "{" {VarDeclaration()}  {MethodDeclaration()}"}"
+}
+
+void VarDeclaration() : {}
+{
+ Type() <IDENTIFIER> ";"
+}
+
+void MethodDeclaration() : {}
+{
+ "public" Type() <IDENTIFIER> "(" [Type() <IDENTIFIER> {"," Type() <IDENTIFIER>} ] ")" "{" {VarDeclaration()} {Statement()} "return" Expression() ";" "}"
+}
+
+void Type() : {}
+{
+ "int" ("[" "]")?
+}
+
+void Statement() : {}
+{
+
+}
+
+void Expression() : {}
+{
+
+}
