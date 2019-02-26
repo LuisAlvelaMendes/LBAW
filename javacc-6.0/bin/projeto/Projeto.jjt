@@ -35,7 +35,7 @@ SimpleNode Program() : {}
 
 void ClassDeclaration() : {}
 {
- "class" <IDENTIFIER> ("extends" <IDENTIFIER>)? "(" {VarDeclaration()}  {MethodDeclaration()} ")"
+ "class" <IDENTIFIER> ("extends" <IDENTIFIER>)? "{" (VarDeclaration())*  (MethodDeclaration())* "}"
 }
 
 void VarDeclaration() : {}
@@ -45,7 +45,7 @@ void VarDeclaration() : {}
 
 void MethodDeclaration() : {}
 {
- "public" Type() <IDENTIFIER> "(" (Type() <IDENTIFIER> {"," Type() <IDENTIFIER>})? ")" "{" {VarDeclaration()} {Statement()} "return" Expression() ";" "}"
+ "public" Type() <IDENTIFIER> "(" (Type() <IDENTIFIER> ("," Type() <IDENTIFIER>)* )? ")" "{" (VarDeclaration())* (Statement())* "return" Expression() ";" "}"
 }
 
 void Type() : {}
@@ -57,7 +57,7 @@ void Type() : {}
 
 void Statement() : {}
 {
- "{" {Statement()} "}"
+ "{" (Statement())* "}"
  | "if" "(" Expression() ")" Statement() "else" Statement()
  | "while" "(" Expression() ")" Statement()
  | Expression() ";"
@@ -67,17 +67,32 @@ void Statement() : {}
 
 void Expression() : {}
 {
- Expression() ("&&" | "<" | "+" | "-" | "*" | "/") Expression()
- | Expression() "[" Expression() "]"
- | Expression() "." "length"
- | Expression() "." <IDENTIFIER> "(" (Expression(){"," Expression()})? ")"
+ Expression1() ("&&" | "<" | "+" | "-" | "*" | "/") Expression1()
+ | Expression2() "[" Expression2() "]"
+ | Expression3() "." "length"
+ | Expression3() "." <IDENTIFIER> "(" (Expression3() ("," Expression3())*)? ")"
  | <INTEGERLITERAL>
  | "true"
  | "false"
  | <IDENTIFIER>
  | "this"
- | "new" "int" "[" Expression() "]"
+ | "new" "int" "[" Expression3() "]"
  | "new" <IDENTIFIER> "(" ")"
- | "!" Expression()
- | "(" Expression() ")"
+ | "!" Expression3()
+ | "(" Expression3() ")"
+}
+
+void Expression1() : {}
+{
+    Expression2()
+}
+
+void Expression2() : {}
+{
+    Expression3()
+}
+
+void Expression3() : {}
+{
+    <IDENTIFIER>
 }
