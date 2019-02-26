@@ -35,7 +35,7 @@ SimpleNode Program() : {}
 
 void ClassDeclaration() : {}
 {
- "class" <IDENTIFIER> ["extends" <IDENTIFIER>] "{" {VarDeclaration()}  {MethodDeclaration()}"}"
+ "class" <IDENTIFIER> ("extends" <IDENTIFIER>)? "(" {VarDeclaration()}  {MethodDeclaration()} ")"
 }
 
 void VarDeclaration() : {}
@@ -45,20 +45,39 @@ void VarDeclaration() : {}
 
 void MethodDeclaration() : {}
 {
- "public" Type() <IDENTIFIER> "(" [Type() <IDENTIFIER> {"," Type() <IDENTIFIER>} ] ")" "{" {VarDeclaration()} {Statement()} "return" Expression() ";" "}"
+ "public" Type() <IDENTIFIER> "(" (Type() <IDENTIFIER> {"," Type() <IDENTIFIER>})? ")" "{" {VarDeclaration()} {Statement()} "return" Expression() ";" "}"
 }
 
 void Type() : {}
 {
  "int" ("[" "]")?
+ | "boolean"
+ | <IDENTIFIER>
 }
 
 void Statement() : {}
 {
-
+ "{" {Statement()} "}"
+ | "if" "(" Expression() ")" Statement() "else" Statement()
+ | "while" "(" Expression() ")" Statement()
+ | Expression() ";"
+ | <IDENTIFIER> "=" Expression() ";"
+ | <IDENTIFIER> "[" Expression() "]" "=" Expression() ";"
 }
 
 void Expression() : {}
 {
-
+ Expression() ("&&" | "<" | "+" | "-" | "*" | "/") Expression()
+ | Expression() "[" Expression() "]"
+ | Expression() "." "length"
+ | Expression() "." <IDENTIFIER> "(" (Expression(){"," Expression()})? ")"
+ | <INTEGERLITERAL>
+ | "true"
+ | "false"
+ | <IDENTIFIER>
+ | "this"
+ | "new" "int" "[" Expression() "]"
+ | "new" <IDENTIFIER> "(" ")"
+ | "!" Expression()
+ | "(" Expression() ")"
 }
