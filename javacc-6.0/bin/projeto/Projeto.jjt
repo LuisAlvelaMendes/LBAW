@@ -20,7 +20,25 @@ SKIP :
 " " | "\r" | "\t"
 }
 
-TOKEN:
+TOKEN: // RESERVED WORDS
+{
+ <NEW: "new">   
+ | <WHILE: "while">
+ | <IF: "if">
+ | <ELSE: "else">
+ | <THIS: "this">
+ | <INT: "int">
+ | <TRUE: "true">
+ | <FALSE: "false">
+ | <CLASS: "class">
+ | <PUBLIC: "public">
+ | <LENGTH: "length">
+ | <RETURN: "return">
+ | <BOOLEAN: "boolean">
+ | <EXTENDS: "extends">
+}
+
+TOKEN: // IDENTIFIERS
 {
  < IDENTIFIER : <LETTER> (<LETTER> | <DIGIT>)* >
  | < #LETTER : ["$","A"-"Z","_","a"-"z"] >
@@ -45,7 +63,18 @@ void VarDeclaration() : {}
 
 void MethodDeclaration() : {}
 {
- "public" Type() <IDENTIFIER> "(" (Type() <IDENTIFIER> ("," Type() <IDENTIFIER>)* )? ")" "{" (VarDeclaration())* (Statement())* "return" Expression() ";" "}"
+ "public" Type() <IDENTIFIER> "(" MethodArguments() ")" 
+ "{" (VarDeclaration())* (Statement())* "return" Expression() ";" "}"
+}
+
+void MethodArguments() : {}
+{
+    (Type() <IDENTIFIER> ("," MethodArgumentPiece())*)?
+}
+
+void MethodArgumentPiece() : {}
+{
+    Type() <IDENTIFIER>
 }
 
 void Type() : {}
@@ -61,38 +90,31 @@ void Statement() : {}
  | "if" "(" Expression() ")" Statement() "else" Statement()
  | "while" "(" Expression() ")" Statement()
  | Expression() ";"
- | <IDENTIFIER> "=" Expression() ";"
- | <IDENTIFIER> "[" Expression() "]" "=" Expression() ";"
+ | <IDENTIFIER> ("=" Expression() ";" | "[" Expression() "]" "=" Expression() ";")
 }
 
 void Expression() : {}
 {
- Expression1() ("&&" | "<" | "+" | "-" | "*" | "/") Expression1()
- | Expression2() "[" Expression2() "]"
- | Expression3() "." "length"
- | Expression3() "." <IDENTIFIER> "(" (Expression3() ("," Expression3())*)? ")"
- | <INTEGERLITERAL>
+ (<INTEGERLITERAL> | <IDENTIFIER>) (Expression1() | Expression2())?
+ | ("this" | <IDENTIFIER>) (Expression3())? 
  | "true"
  | "false"
- | <IDENTIFIER>
- | "this"
- | "new" "int" "[" Expression3() "]"
- | "new" <IDENTIFIER> "(" ")"
+ | "new" ("int" "[" Expression3() "]" | <IDENTIFIER> "(" ")")
  | "!" Expression3()
  | "(" Expression3() ")"
 }
 
 void Expression1() : {}
 {
-    Expression2()
+    ("&&" | "<" | "+" | "-" | "*" | "/") Expression()
 }
 
 void Expression2() : {}
 {
-    Expression3()
+    "[" Expression() "]"
 }
 
 void Expression3() : {}
 {
-    <IDENTIFIER>
+    "." ("length" | <IDENTIFIER> "(" (Expression() ("," Expression())*)? ")")
 }

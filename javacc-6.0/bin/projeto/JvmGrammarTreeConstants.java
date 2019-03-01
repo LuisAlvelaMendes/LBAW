@@ -5,12 +5,14 @@ public interface JvmGrammarTreeConstants
   public int JJTCLASSDECLARATION = 1;
   public int JJTVARDECLARATION = 2;
   public int JJTMETHODDECLARATION = 3;
-  public int JJTTYPE = 4;
-  public int JJTSTATEMENT = 5;
-  public int JJTEXPRESSION = 6;
-  public int JJTEXPRESSION1 = 7;
-  public int JJTEXPRESSION2 = 8;
-  public int JJTEXPRESSION3 = 9;
+  public int JJTMETHODARGUMENTS = 4;
+  public int JJTMETHODARGUMENTPIECE = 5;
+  public int JJTTYPE = 6;
+  public int JJTSTATEMENT = 7;
+  public int JJTEXPRESSION = 8;
+  public int JJTEXPRESSION1 = 9;
+  public int JJTEXPRESSION2 = 10;
+  public int JJTEXPRESSION3 = 11;
 
 
   public String[] jjtNodeName = {
@@ -18,6 +20,8 @@ public interface JvmGrammarTreeConstants
     "ClassDeclaration",
     "VarDeclaration",
     "MethodDeclaration",
+    "MethodArguments",
+    "MethodArgumentPiece",
     "Type",
     "Statement",
     "Expression",
@@ -26,4 +30,4 @@ public interface JvmGrammarTreeConstants
     "Expression3",
   };
 }
-/* JavaCC - OriginalChecksum=b8381e61b910b171af10cf4fc1e650e0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=37e8c9d16c4d45a9a32a598e70d86292 (do not edit this line) */
