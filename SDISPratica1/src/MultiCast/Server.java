@@ -58,32 +58,17 @@ public class Server {
 	
     private void service() throws IOException {
     	
-    	//refazer com duas threads, also é o cliente que cria o grupo multicast
-    	
-    	/*   //Multicast creation:
-        	InetAddress addr = InetAddress.getByName(mcast_addr);
-            
-            //Client creates the multicast group
-            MulticastSocket socket = new MulticastSocket(mcast_port);
-            
-            //Client tries to join the multicast group
-            socket.joinGroup(addr);
-        */
+    	//Server creates the multicast group for client to join and joins it too
+        MulticastSocket mcastSocket = new MulticastSocket(mcast_port);
+        mcastSocket.joinGroup(mcast_addr);
+        
+        //Thread 1: Server needs to tell client about the port and ip address that is servicing on.
+        Advertisement advertiseThread = new Advertisement(mcastSocket, mcast_addr, mcast_port, Integer.toString(socket.getLocalPort()));
+        advertiseThread.start();
     	
         while (true) {
         	
-        	//Thread 1: Server needs to tell client about the port and ip address that is servicing on.
-        	
-        	byte[] bufTellPort = new byte[256];
-        	String tellPortString = "" + socket.getLocalPort() + " " + "127.0.0.1";
-        	bufTellPort = tellPortString.getBytes();
-        	
-        	DatagramPacket tellPort = new DatagramPacket(bufTellPort, bufTellPort.length, mcast_addr, mcast_port);
-        	
-        	socket.send(tellPort);
-        	//-Sleep-
-        	
-        	//Thread 2: Now it can wait for the client to actually send something.
+        	//Thread 2: Process client request once it sends one.
         	
         	byte[] buf = new byte[256];
         	
@@ -93,7 +78,7 @@ public class Server {
             
             socket.receive(request);
             
-            System.out.println("Received from m_cast adress " + request.getAddress().getHostAddress() + " and port " + request.getPort());
+            System.out.println("Received from port " + request.getPort());
             
             String received = new String(request.getData(), 0, request.getLength());
             
@@ -152,5 +137,44 @@ public class Server {
 		}
 		
 		return "NOT_FOUND";
+	}
+}
+
+class Advertisement extends Thread{
+	
+	MulticastSocket socket;
+	InetAddress mcast_addr;
+	int mcast_port;
+	String servicePort;
+	
+	public Advertisement(MulticastSocket socket, InetAddress addr, int port, String servicePort){
+		this.socket = socket;
+		this.mcast_addr = addr;
+		this.mcast_port = port;
+		this.servicePort = servicePort;
+	}
+	
+	public void run() {
+		while(true) {
+	    	byte[] bufTellPort = new byte[256];
+	    	String tellPortString = "" + servicePort + " " + "127.0.0.1";
+	    	bufTellPort = tellPortString.getBytes();
+	    	
+	    	DatagramPacket tellPort = new DatagramPacket(bufTellPort, bufTellPort.length, mcast_addr, mcast_port);
+	    	
+	    	try {
+	    		System.out.println("Sending " + tellPortString + " with mcast_addr " + mcast_addr);
+				socket.send(tellPort);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	    	
+	    	try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }

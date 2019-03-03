@@ -19,13 +19,9 @@ public class Client {
         
         try {
         	
-        	//Multicast creation:
+        	//Multicast group joining ...
         	InetAddress addr = InetAddress.getByName(mcast_addr);
-            
-            //Client creates the multicast group
             MulticastSocket socket = new MulticastSocket(mcast_port);
-            
-            //Client tries to join the multicast group
             socket.joinGroup(addr);
  
             while (true) {
@@ -58,7 +54,7 @@ public class Client {
             	
             	InetAddress address = InetAddress.getByName(infoParts[1]);
             	int port = Integer.parseInt(infoParts[0]);
-            	
+            	            	
             	//Now that it knows the info it can proceed like normal
             	
                 DatagramPacket request = new DatagramPacket(buf, buf.length, address, port);
