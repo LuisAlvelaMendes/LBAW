@@ -17,7 +17,7 @@ PARSER_END(JvmGrammar)
 
 SKIP :
 {
-" " | "\r" | "\t"
+" " | "\r" | "\t" | "\n"
 }
 
 TOKEN: // RESERVED WORDS
@@ -36,6 +36,10 @@ TOKEN: // RESERVED WORDS
  | <RETURN: "return">
  | <BOOLEAN: "boolean">
  | <EXTENDS: "extends">
+ | <VOID: "void">
+ | <MAIN: "main">
+ | <STATIC: "static">
+ | <STRING: "String">
 }
 
 TOKEN: // IDENTIFIERS
@@ -53,7 +57,9 @@ SimpleNode Program() : {}
 
 void ClassDeclaration() : {}
 {
- "class" <IDENTIFIER> ("extends" <IDENTIFIER>)? "{" (VarDeclaration())*  (MethodDeclaration())* "}"
+ "class" <IDENTIFIER> ("extends" <IDENTIFIER>)? 
+ "{" (VarDeclaration())*  
+ ( "public"(MainDeclaration() | MethodDeclaration()) )* "}"
 }
 
 void VarDeclaration() : {}
@@ -61,10 +67,18 @@ void VarDeclaration() : {}
  Type() <IDENTIFIER> ";"
 }
 
+void MainDeclaration() : {}
+{
+    "static" "void" "main" 
+    "(" "String" "[" "]" <IDENTIFIER> ")" 
+    "{" (VarDeclaration())* (Statement())* "}"
+}
+
 void MethodDeclaration() : {}
 {
- "public" Type() <IDENTIFIER> "(" MethodArguments() ")" 
- "{" (VarDeclaration())* (Statement())* "return" Expression() ";" "}"
+  Type() <IDENTIFIER> "(" MethodArguments() ")" 
+ "{" (VarDeclaration())* (Statement())* 
+ "return" Expression() ";" "}"
 }
 
 void MethodArguments() : {}

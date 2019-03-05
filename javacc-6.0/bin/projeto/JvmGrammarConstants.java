@@ -9,41 +9,49 @@ public interface JvmGrammarConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int NEW = 4;
+  int NEW = 5;
   /** RegularExpression Id. */
-  int WHILE = 5;
+  int WHILE = 6;
   /** RegularExpression Id. */
-  int IF = 6;
+  int IF = 7;
   /** RegularExpression Id. */
-  int ELSE = 7;
+  int ELSE = 8;
   /** RegularExpression Id. */
-  int THIS = 8;
+  int THIS = 9;
   /** RegularExpression Id. */
-  int INT = 9;
+  int INT = 10;
   /** RegularExpression Id. */
-  int TRUE = 10;
+  int TRUE = 11;
   /** RegularExpression Id. */
-  int FALSE = 11;
+  int FALSE = 12;
   /** RegularExpression Id. */
-  int CLASS = 12;
+  int CLASS = 13;
   /** RegularExpression Id. */
-  int PUBLIC = 13;
+  int PUBLIC = 14;
   /** RegularExpression Id. */
-  int LENGTH = 14;
+  int LENGTH = 15;
   /** RegularExpression Id. */
-  int RETURN = 15;
+  int RETURN = 16;
   /** RegularExpression Id. */
-  int BOOLEAN = 16;
+  int BOOLEAN = 17;
   /** RegularExpression Id. */
-  int EXTENDS = 17;
+  int EXTENDS = 18;
   /** RegularExpression Id. */
-  int IDENTIFIER = 18;
+  int VOID = 19;
   /** RegularExpression Id. */
-  int LETTER = 19;
+  int MAIN = 20;
   /** RegularExpression Id. */
-  int DIGIT = 20;
+  int STATIC = 21;
   /** RegularExpression Id. */
-  int INTEGERLITERAL = 21;
+  int STRING = 22;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 23;
+  /** RegularExpression Id. */
+  int LETTER = 24;
+  /** RegularExpression Id. */
+  int DIGIT = 25;
+  /** RegularExpression Id. */
+  int INTEGERLITERAL = 26;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -54,6 +62,7 @@ public interface JvmGrammarConstants {
     "\" \"",
     "\"\\r\"",
     "\"\\t\"",
+    "\"\\n\"",
     "\"new\"",
     "\"while\"",
     "\"if\"",
@@ -68,6 +77,10 @@ public interface JvmGrammarConstants {
     "\"return\"",
     "\"boolean\"",
     "\"extends\"",
+    "\"void\"",
+    "\"main\"",
+    "\"static\"",
+    "\"String\"",
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",
@@ -76,10 +89,10 @@ public interface JvmGrammarConstants {
     "\"}\"",
     "\";\"",
     "\"(\"",
-    "\")\"",
-    "\",\"",
     "\"[\"",
     "\"]\"",
+    "\")\"",
+    "\",\"",
     "\"=\"",
     "\"!\"",
     "\"&&\"",
