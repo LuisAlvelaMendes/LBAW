@@ -71,13 +71,13 @@ void MainDeclaration() : {}
 {
     "static" "void" "main" 
     "(" "String" "[" "]" <IDENTIFIER> ")" 
-    "{" (VarDeclaration())* (Statement())* "}"
+    "{" (LOOKAHEAD(2) VarDeclaration())* (Statement())* "}"
 }
 
 void MethodDeclaration() : {}
 {
   Type() <IDENTIFIER> "(" MethodArguments() ")" 
- "{" (VarDeclaration())* (Statement())* 
+ "{" (LOOKAHEAD(2) VarDeclaration())* (Statement())* 
  "return" Expression() ";" "}"
 }
 
@@ -103,13 +103,13 @@ void Statement() : {}
  "{" (Statement())* "}"
  | "if" "(" Expression() ")" Statement() "else" Statement()
  | "while" "(" Expression() ")" Statement()
- | Expression() ";"
+ | LOOKAHEAD(2) Expression() ";"
  | <IDENTIFIER> ("=" Expression() ";" | "[" Expression() "]" "=" Expression() ";")
 }
 
 void Expression() : {}
 {
- (<INTEGERLITERAL> | <IDENTIFIER>) (Expression1() | Expression2())?
+ LOOKAHEAD(2) (<INTEGERLITERAL> | <IDENTIFIER>) (Expression1() | Expression2())?
  | ("this" | <IDENTIFIER>) (Expression3())? 
  | "true"
  | "false"

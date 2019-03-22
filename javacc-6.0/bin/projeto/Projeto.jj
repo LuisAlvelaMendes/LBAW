@@ -159,7 +159,7 @@ void MainDeclaration() : {/*@bgen(jjtree) MainDeclaration */
 /*@egen*/
     "static" "void" "main" 
     "(" "String" "[" "]" <IDENTIFIER> ")" 
-    "{" (VarDeclaration())* (Statement())* "}"/*@bgen(jjtree)*/
+    "{" (LOOKAHEAD(2) VarDeclaration())* (Statement())* "}"/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -191,7 +191,7 @@ void MethodDeclaration() : {/*@bgen(jjtree) MethodDeclaration */
   try {
 /*@egen*/
   Type() <IDENTIFIER> "(" MethodArguments() ")" 
- "{" (VarDeclaration())* (Statement())* 
+ "{" (LOOKAHEAD(2) VarDeclaration())* (Statement())* 
  "return" Expression() ";" "}"/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -307,7 +307,7 @@ void Statement() : {/*@bgen(jjtree) Statement */
  "{" (Statement())* "}"
  | "if" "(" Expression() ")" Statement() "else" Statement()
  | "while" "(" Expression() ")" Statement()
- | Expression() ";"
+ | LOOKAHEAD(2) Expression() ";"
  | <IDENTIFIER> ("=" Expression() ";" | "[" Expression() "]" "=" Expression() ";")/*@bgen(jjtree)*/
  } catch (Throwable jjte000) {
    if (jjtc000) {
@@ -339,7 +339,7 @@ void Expression() : {/*@bgen(jjtree) Expression */
 {/*@bgen(jjtree) Expression */
  try {
 /*@egen*/
- (<INTEGERLITERAL> | <IDENTIFIER>) (Expression1() | Expression2())?
+ LOOKAHEAD(2) (<INTEGERLITERAL> | <IDENTIFIER>) (Expression1() | Expression2())?
  | ("this" | <IDENTIFIER>) (Expression3())? 
  | "true"
  | "false"
