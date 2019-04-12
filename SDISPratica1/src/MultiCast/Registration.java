@@ -1,5 +1,3 @@
-package MultiCast;
-
 public class Registration {
 	
 	public String owner;
