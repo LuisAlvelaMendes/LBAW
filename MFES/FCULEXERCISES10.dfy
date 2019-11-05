@@ -8,6 +8,7 @@ method find (a : array <int>, key : int) returns ( index : int )
 
     while index < a.Length && a[index] != key 
         invariant 0 <= index <= a.Length;
+        invariant forall i:: 0 <= i < index ==> a[i] != key;
         decreases a.Length - index;
     {
         ghost var Vzero := a.Length - index;

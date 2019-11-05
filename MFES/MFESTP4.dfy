@@ -11,7 +11,9 @@ class {:autocontracts} Stack
     var size : nat; // used size
  
     constructor (cap: nat)
-        ensures Valid()
+        ensures Valid();
+        ensures size == 0;
+        ensures this.elems.Length == cap;
     {
         elems := new T[cap];
         size := 0; 
