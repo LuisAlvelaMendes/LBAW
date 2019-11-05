@@ -12,6 +12,8 @@ method sum ( n: nat ) returns ( s: nat )
     var i : int := n ;
     
     while i > 0 
+        invariant i >= 0;
+        invariant s == sumi(n, s-i);
         decreases i;
     {
         s := s + i ;
