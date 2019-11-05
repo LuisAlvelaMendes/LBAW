@@ -9,7 +9,7 @@ method product (m: nat , n: nat ) returns ( res: nat )
         invariant m >= 0;
         invariant n >= 0;
         invariant m1 <= m;
-        invariant m1 == 0 ==> res == m*n;
+        invariant m1 < 0 && m != 0 && n != 0 ==> res == m*n;
         decreases m1;
     {
         var n1: nat := n ;
@@ -17,6 +17,7 @@ method product (m: nat , n: nat ) returns ( res: nat )
         while n1 != 0 
             invariant m1 != 0;
             invariant n1 <= n;
+            invariant m1 == 0 ==> res == 0;
             decreases n1;
         {
             res := res + 1;
