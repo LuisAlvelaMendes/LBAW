@@ -11,7 +11,7 @@ method power ( n: nat ) returns ( j : nat )
     j := 1;
 
     while k < n
-        invariant k <= n;
+        invariant 0 <= k <= n;
         invariant j == powerOfTwo(k);
         decreases n-k;
     {

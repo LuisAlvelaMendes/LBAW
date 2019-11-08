@@ -6,10 +6,6 @@ method bitwiseAdd ( a0 : int , b0 : int ) returns ( c : int )
     var a , b, g, m := a0, b0, 1, 0;
 
     while ( a > 0 || b > 0 ) 
-        invariant a0 >= 0 && b0 >= 0;
-        invariant a >= 0 && b >= 0;
-        invariant a <= a0 && b <= b0;
-        decreases a;
     {
         m := m + a % 2 + b % 2;
         a := a / 2;

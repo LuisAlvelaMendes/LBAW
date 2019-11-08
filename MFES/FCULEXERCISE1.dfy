@@ -11,7 +11,7 @@ method odd ( n: nat ) returns (j:int)
     // I ^ k >= n => j == 1 + 2 * n
 
     while k < n
-        invariant k <= n;
+        invariant 0 <= k <= n;
         invariant j == 1+2*k;
         decreases n-k;
     {
